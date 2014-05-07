@@ -2622,6 +2622,11 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 	@# INSTALLED_RADIOIMAGE_TARGET.
 	$(hide) $(foreach part,$(BOARD_PACK_RADIOIMAGES), \
 	    echo $(part) >> $(zip_root)/META/pack_radioimages.txt;)
+ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
+	$(hide) vendor/citrus/build/tools/getb64key.py $(PRODUCT_DEFAULT_DEV_CERTIFICATE).x509.pem > $(zip_root)/META/releasekey.txt
+else
+	$(hide) vendor/citrus/build/tools/getb64key.py $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem > $(zip_root)/META/releasekey.txt
+endif
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM,system/) > $(zip_root)/META/filesystem_config.txt
