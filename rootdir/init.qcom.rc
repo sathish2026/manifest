@@ -593,6 +593,14 @@ service time_daemon /system/vendor/bin/time_daemon
     group root
     writepid /dev/cpuset/system-background/tasks
 
+service fps_hal /vendor/bin/hw/android.hardware.biometrics.fingerprint@2.1-service
+    class late_start
+    user system
+    group system sdcard_rw
+    system system
+    writepid /dev/cpuset/system-background/tasks
+    disabled
+
 service gx_fpd /system/bin/gx_fpd
      class core
      user root
@@ -602,11 +610,13 @@ service gx_fpd /system/bin/gx_fpd
 on property:sys.fp.vendor=switchf
     stop gx_fpd
     setprop sys.fp.vendor searchf
+    start fps_hal
     setprop fpc.fp.miui.token 0
     setprop ro.boot.fpsensor fpc
     setprop ro.hardware.fingerprint searchf
 
 on property:sys.fp.onstart=1
+   start fps_hal
    setprop goodix.fp.miui.analyse 1
    setprop goodix.fp.miui.token 0
    setprop ro.boot.fpsensor gdx
